@@ -12,8 +12,14 @@ public class GameRenderer implements GLSurfaceView.Renderer
 {
 	public GameRenderer(Context ctx) {
 		this.ctx = ctx;
+		this.callback = null;
 	}
-	
+
+	public void setCallback(RenderCallback callback)
+	{
+		this.callback = callback;
+	}
+
 	@Override
 	public void onSurfaceCreated(GL10 p1, javax.microedition.khronos.egl.EGLConfig p2)
 	{
@@ -38,6 +44,10 @@ public class GameRenderer implements GLSurfaceView.Renderer
 		// gl.glVertexAttribP
 		gl.glVertexAttribPointer(aPosLoc, 2, gl.GL_FLOAT, false, 4 * 2, vbo);
 		gl.glDrawArrays(gl.GL_TRIANGLES, 0, 3);
+		
+		if (callback != null) {
+			callback.callback();
+		}
 	}
 	
 	private void setupVertices() {
@@ -113,8 +123,17 @@ public class GameRenderer implements GLSurfaceView.Renderer
 	private int attrib(String attribute) {
 		return gl.glGetAttribLocation(program, attribute);
 	}
+	
+	public abstract class RenderCallback {
+		public void draw(float x, float y, int id) {
+			// TODO
+		}
+		
+		public abstract void callback();
+	}
 
 	private int program;
 	private FloatBuffer vbo;
 	private Context ctx;
+	private RenderCallback callback;
 }
